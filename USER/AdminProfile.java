@@ -8,19 +8,26 @@ import java.io.*;
 
 public class AdminProfile implements Profile{
     private String username;
+    private String id;
     private List<Genre> preferences;
     private List<Content> managedContent;
 
-    public AdminProfile(String username, List<Genre> preferences){
+    public AdminProfile(String username, List<Genre> preferences, String id){
         this.username = username;
+        this.id = id;
         this.preferences = preferences;
-        this.managedContent = new ArrayList<>();
+        this.managedContent = new ArrayList<    >();
     }
 
     @Override
     /* Returns username */
     public String getUsername(){
         return username;
+    }
+
+    @Override
+    public String getID(){
+        return id;
     }
 
     @Override

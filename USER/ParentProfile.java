@@ -5,9 +5,10 @@ import EXCEPTIONS.InvalidProfileException;
 
 public class ParentProfile implements Profile{
     private String username;
+    private String id;
     private List<Genre> preferences;
 
-    public ParentProfile(String username, List<Genre> preferences) throws InvalidProfileException{
+    public ParentProfile(String username, String id, List<Genre> preferences) throws InvalidProfileException{
         if(username == null || username.trim().isEmpty()){
             throw new InvalidProfileException("Parent profile must have a username");
         }
@@ -17,6 +18,7 @@ public class ParentProfile implements Profile{
         }
 
         this.username = username;
+        this.id = id;
         this.preferences = preferences;
     }
 
@@ -24,6 +26,11 @@ public class ParentProfile implements Profile{
     /* Returns username */
     public String getUsername(){
         return username;
+    }
+
+    @Override
+    public String getID(){
+        return id;
     }
 
     @Override

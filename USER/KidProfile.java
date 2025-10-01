@@ -6,9 +6,10 @@ import CONTENT.Genre;
 
 public class KidProfile implements Profile{
     private String username;
+    private String id;
     private List<Genre> preferences;
     
-    public KidProfile(String username, List<Genre> preferences) throws InvalidProfileException{
+    public KidProfile(String username, List<Genre> preferences, String id) throws InvalidProfileException{
         if(username == null || username.trim().isEmpty()){
             throw new InvalidProfileException("Kid profile must have a username");
         }
@@ -17,6 +18,7 @@ public class KidProfile implements Profile{
         }
         
         this.username = username;
+        this.id = id;
         this.preferences = preferences;
     }
 
@@ -24,6 +26,11 @@ public class KidProfile implements Profile{
     /* Gives the profile's username */
     public String getUsername() {
         return username;
+    }
+
+    @Override
+    public String getID(){
+        return id;
     }
 
     @Override
