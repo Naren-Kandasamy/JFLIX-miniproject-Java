@@ -20,10 +20,10 @@ public class ContentRepository implements Repository<Content>{
     @Override   
     public boolean remove(String id) {
         if(!contentMap.containsKey(id)){
-            return false;  // ✅ Content not found, return false
+            return false;  // Content not found, return false
         }
         contentMap.remove(id);
-        return true;  // ✅ Successfully removed, return true
+        return true;  // Successfully removed, return true
     }
 
     @Override
