@@ -4,6 +4,11 @@ import EXCEPTIONS.ContentNotFoundException;
 import EXCEPTIONS.InvalidProfileException;
 import EXCEPTIONS.InvalidRatingException;
 import java.util.*;
+import SERVICES.RecommendationEngine;
+import SERVICES.HistoryTracker;
+import EXCEPTIONS.AuthorizationException;
+import CONTENT.Series;
+import CONTENT.Episode;
 
 public class Viewer {
     private Profile profile;
@@ -22,12 +27,46 @@ public class Viewer {
         System.out.println("Preferences: "+profile.getPreferences());
     }
 
-    public void viewContent(Content content) throws ContentNotFoundException{
-        if(content == null){
+    public void viewContent(Content content, HistoryTracker historyTracker) throws ContentNotFoundException, AuthorizationException, InvalidProfileException {
+        if (content == null) {
             throw new ContentNotFoundException("Content must be selected to view it");
         }
-        System.out.println("Now viewing : "+content.getTitle());
-        System.out.println("Description: "+content.getDescription());
+
+        if (profile instanceof KidProfile && content.getAgeRating() > 13) {
+            throw new AuthorizationException("You are not authorized to view this content.");
+        }
+
+        if (content instanceof Series) {
+            Series series = (Series) content;
+            List<Episode> episodes = series.getEpisodes();
+
+            if (episodes.isEmpty()) {
+                System.out.println("This series has no episodes.");
+                return;
+            }
+
+            System.out.println("Episodes for " + series.getTitle() + ":");
+            for (int i = 0; i < episodes.size(); i++) {
+                System.out.println((i + 1) + ". " + episodes.get(i).getEpisodeTitle());
+            }
+
+            System.out.print("Select an episode to watch: ");
+            Scanner scanner = new Scanner(System.in);
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+
+            if (choice > 0 && choice <= episodes.size()) {
+                Episode selectedEpisode = episodes.get(choice - 1);
+                System.out.println("Now viewing episode: " + selectedEpisode.getEpisodeTitle());
+                historyTracker.add_to_history(profile, content, selectedEpisode.getEpisodeId());
+            } else {
+                System.out.println("Invalid episode selection.");
+            }
+        } else {
+            System.out.println("Now viewing : " + content.getTitle());
+            System.out.println("Description: " + content.getDescription());
+            historyTracker.add_to_history(profile, content);
+        }
     }
 
     public void rateContent(Content content, float rating) throws InvalidRatingException{

@@ -1,18 +1,25 @@
 package CONTENT;
 import CORE.Identifiable;
+import java.io.Serializable;
 
-public abstract class Content implements Identifiable{
+public abstract class Content implements Identifiable, Serializable{
+    private static final long serialVersionUID = 1L;
     protected String id;
     protected String title;
     protected Genre genre;
     protected int duration;
     protected String director;
-    protected String description;
+    String description;
     protected float total_rating;
     private int rating_count;
+    protected int ageRating;
 
+    // Default constructor to have default genre
+    public Content() {
+        this("default_id", "No Title", Genre.ACTION, 0, "No Director", 0);
+    }
 
-    public Content(String id, String title, Genre genre, int duration, String director){
+    public Content(String id, String title, Genre genre, int duration, String director, int ageRating){
         this.id = id;
         this.title = title;
         this.genre = genre;
@@ -20,6 +27,18 @@ public abstract class Content implements Identifiable{
         this.director = director;
         this.total_rating = 0;
         this.rating_count = 0;
+        this.ageRating = ageRating;
+    }
+
+    public int getAgeRating(){
+        return ageRating;
+    }
+
+    // Abstract method to be implemented by subclasses
+    public abstract String getContentType();
+
+    public String getDetails() {
+        return "Title: " + title + ", Genre: " + genre;
     }
 
     @Override

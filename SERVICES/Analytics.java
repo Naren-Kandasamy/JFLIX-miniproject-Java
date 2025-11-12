@@ -80,6 +80,7 @@ public class Analytics {
             .collect(Collectors.groupingBy(HistoryTracker.HistoryEntry::get_content_id, Collectors.counting()));
 
         return count_by_id.entrySet().stream()
+            .sorted(Map.Entry.<String, Long>comparingByValue().reversed()) // Sort by count
             .map(entry -> {
                 try {
                     return content_repository.findByID(entry.getKey());
@@ -87,13 +88,9 @@ public class Analytics {
                     return null;
                 }
             })
-        .filter(Objects::nonNull)
-        .collect(Collectors.groupingBy(c -> c, Collectors.counting()))
-        .entrySet().stream()
-        .sorted(Map.Entry.<Content, Long>comparingByValue().reversed())
-        .limit(limit)
-        .map(Map.Entry::getKey)
-        .toList();
+            .filter(Objects::nonNull)
+            .limit(limit)
+            .collect(Collectors.toList());
     }
 
     private Genre getMostPopularGenre() {

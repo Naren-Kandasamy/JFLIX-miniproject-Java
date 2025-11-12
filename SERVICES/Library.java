@@ -42,6 +42,12 @@ public class Library {
                 .filter(c -> c.getGenre() == genre)
                 .collect(Collectors.toList());
     }
+
+    public List<Content> searchByType(Class<? extends Content> type) {
+        return contentRepository.getAll().stream()
+                .filter(type::isInstance)
+                .collect(Collectors.toList());
+    }
     
     public Content findById(String contentId) throws ContentNotFoundException{
         return contentRepository.findByID(contentId);

@@ -1,9 +1,11 @@
 package USER;
+import java.io.Serializable;
 import java.util.List;
 import CONTENT.Genre;
 import EXCEPTIONS.InvalidProfileException;
 
-public class ParentProfile implements Profile{
+public class ParentProfile implements Profile, Serializable{
+    private static final long serialVersionUID = 1L;
     private String username;
     private String id;
     private List<Genre> preferences;

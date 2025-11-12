@@ -43,9 +43,13 @@ public class HistoryTracker {
     }
 
     private final Map<String, List<HistoryEntry>> history_map = new HashMap<>();
-
+    private final Map<String, Map<String, Set<String>>> series_history_map = new HashMap<>();
 
     public void add_to_history(Profile profile, Content content) throws ContentNotFoundException, InvalidProfileException{
+        add_to_history(profile, content, null);
+    }
+
+    public void add_to_history(Profile profile, Content content, String episodeId) throws ContentNotFoundException, InvalidProfileException{
         if(profile == null){
             throw new InvalidProfileException("Profile cannot be null");
         }
@@ -55,7 +59,12 @@ public class HistoryTracker {
         }
 
         String pid = profile.getID();
-        history_map.computeIfAbsent(pid,_ -> new ArrayList<>()).add(new HistoryEntry(content,LocalDateTime.now())); // have to check if parameter k or _ is needed.
+        history_map.computeIfAbsent(pid,k -> new ArrayList<>()).add(new HistoryEntry(content,LocalDateTime.now())); 
+
+        if (episodeId != null) {
+            series_history_map.computeIfAbsent(pid, k -> new HashMap<>())
+                .computeIfAbsent(content.getID(), k -> new HashSet<>()).add(episodeId);
+        }
     }
 
     public List<HistoryEntry> getHistory(Profile profile) throws InvalidProfileException{
@@ -78,6 +87,14 @@ public class HistoryTracker {
         return history_map.values().stream()
                 .flatMap(List::stream)
                 .toList(); // requires Java 16+, else use collect(Collectors.toList())
+    }
+
+    public Set<String> getWatchedEpisodes(Profile profile, String seriesId) {
+        if (profile == null || seriesId == null) {
+            return Collections.emptySet();
+        }
+        return series_history_map.getOrDefault(profile.getID(), Collections.emptyMap())
+            .getOrDefault(seriesId, Collections.emptySet());
     }
 
 

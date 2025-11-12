@@ -1,10 +1,12 @@
 package USER;
 
+import java.io.Serializable;
 import java.util.List;
 import EXCEPTIONS.InvalidProfileException;
 import CONTENT.Genre;
 
-public class KidProfile implements Profile{
+public class KidProfile implements Profile, Serializable{
+    private static final long serialVersionUID = 1L;
     private String username;
     private String id;
     private List<Genre> preferences;

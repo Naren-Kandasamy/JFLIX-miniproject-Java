@@ -42,7 +42,7 @@ public class ContentManager {
         .filter(type::isInstance).
         collect(Collectors.toList());
 
-        if(!result.isEmpty()){
+        if(result.isEmpty()){
             throw new ContentNotFoundException("Content of type "+type+" not found");
         }
 

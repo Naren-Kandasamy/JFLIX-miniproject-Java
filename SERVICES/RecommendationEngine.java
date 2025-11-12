@@ -5,6 +5,8 @@ import CONTENT.Content;
 import CONTENT.Genre;
 import EXCEPTIONS.*;
 import java.util.*;
+import CONTENT.Series;
+import CONTENT.Episode;
 
 public class RecommendationEngine {
 
@@ -28,17 +30,14 @@ public class RecommendationEngine {
 
         List<Content> recommendations = new ArrayList<>();
         Set<String> alreadyWatchedIds = new HashSet<>();
-
-        // 1️⃣ Get history + watched IDs
+        
         List<HistoryTracker.HistoryEntry> history = historyTracker.getHistory(profile);
         for (HistoryTracker.HistoryEntry entry : history) {
             alreadyWatchedIds.add(entry.get_content_id());
         }
 
-        // 2️⃣ Get favorite genre from analytics
         Genre favoriteGenre = analytics.get_favorite_genre(profile);
 
-        // 3️⃣ Recommend from favorite genre first (content-based filtering)
         if (favoriteGenre != null) {
             List<Content> genreBased = contentRepository.getAll().stream()
                     .filter(c -> !alreadyWatchedIds.contains(c.getID())) // exclude watched
@@ -49,7 +48,6 @@ public class RecommendationEngine {
             recommendations.addAll(genreBased);
         }
 
-        // 4️⃣ If not enough → add trending (system-wide popular content)
         if (recommendations.size() < limit) {
             List<Content> trending = analytics.get_most_watched_contents(limit);
 
@@ -60,7 +58,6 @@ public class RecommendationEngine {
                 }
             }
         }
-
         return recommendations;
     }
 }
